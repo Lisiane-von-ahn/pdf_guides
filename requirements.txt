@@ -1,0 +1,11 @@
+PyMuPDF
+pdfplumber
+streamlit
+streamlit 
+streamlit-quill 
+pdfplumber
+streamlit_ace
+pdfkit
+weasyprint
+streamlit_pdf_viewer
+fitz
