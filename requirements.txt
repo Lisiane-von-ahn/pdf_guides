@@ -9,3 +9,9 @@ pdfkit
 weasyprint
 streamlit_pdf_viewer
 fitz
+PyPDF2
+python-docx
+google-auth 
+google-auth-oauthlib 
+google-auth-httplib2 
+google-api-python-client
