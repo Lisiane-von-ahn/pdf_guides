@@ -75,8 +75,8 @@ def get_years(module_name):
     with sqlite3.connect('modules.db') as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT years.year FROM years
-        JOIN modules ON years.module_id = modules.id
+        SELECT years. FROM years
+        JOIN modules ON yearyears.module_id = modules.id
         WHERE modules.name = ?
         ''', (module_name,))
         return [row[0] for row in c.fetchall()]
