@@ -15,7 +15,7 @@ def display_pdf(pdf_data):
 checkbox_result = st.checkbox('Afficher Preview ?')
 
 # Section pour charger les fichiers
-st.subheader("Télécharger des fichiers PDF")
+st.subheader("Télécharger des fichiers PDF ou DOCX")
 fichiers_uploades = st.file_uploader("Choisissez des fichiers PDF", type=['pdf', 'docx'], accept_multiple_files=True)
 
 # Si des fichiers ont été téléchargés
