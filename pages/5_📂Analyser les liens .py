@@ -10,9 +10,9 @@ pdf_files = []
 
 # Fonction pour afficher les fichiers PDF
 def display_pdf(pdf_data):
-    pdf_viewer(input=pdf_data, width=700)
+    pdf_viewer(input=pdf_data)
 
-checkbox_result = st.checkbox('Afficher Preview ?')
+checkbox_result = st.checkbox('Afficher Preview (seul pdf) ?')
 
 # Section pour charger les fichiers
 st.subheader("Télécharger des fichiers PDF ou DOCX")
@@ -35,8 +35,6 @@ if fichiers_uploades:
             liens = extraire_liens(fichier_uploade.name)
             
             afficher_accordion(fichier_uploade.name,liens)        
-            
-            if checkbox_result == True:
-                with st.expander("Preview du fichier (seul PDF)"):
-                    if "pdf" in str(fichier_uploade.name):
-                        display_pdf(donnees)
+
+            if checkbox_result == True and "pdf" in str(fichier_uploade.name).lower():
+                display_pdf(donnees)
