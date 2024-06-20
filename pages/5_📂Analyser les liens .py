@@ -38,5 +38,5 @@ if fichiers_uploades:
             
             if checkbox_result == True:
                 with st.expander("Preview du fichier (seul PDF)"):
-                    if "pdf" in fichier_uploade.name:
+                    if "pdf" in str(fichier_uploade.name):
                         display_pdf(donnees)
