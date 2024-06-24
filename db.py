@@ -39,7 +39,9 @@ def initialize_db():
             id INTEGER PRIMARY KEY,
             file_name TEXT,
             content BLOB,
+            text_content TEXT,    
             year_id INTEGER,
+            extension TEXT,
             FOREIGN KEY (year_id) REFERENCES years (id)
         )
         ''')
@@ -85,12 +87,12 @@ def get_files(year, module_name):
     with sqlite3.connect('modules.db') as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT files.content FROM files
+        SELECT files.file_name,files.content FROM files
         JOIN years ON files.year_id = years.id
         JOIN modules ON years.module_id = modules.id
         WHERE years.year = ? AND modules.name = ?
         ''', (year, module_name))
-        return [row[0] for row in c.fetchall()]
+        return [row for row in c.fetchall()]
 
 def add_site(site_name):
     with sqlite3.connect('modules.db') as conn:
@@ -120,15 +122,15 @@ def add_year(year, module_name):
         ''', (year, module_name))
         conn.commit()
 
-def add_file(file_name, content, year, module_name):
+def add_file(file_name, content, year, module_name, text_content):
     with sqlite3.connect('modules.db') as conn:
         c = conn.cursor()
         c.execute('''
-        INSERT INTO files (file_name, content, year_id) VALUES (?, ?, 
+        INSERT INTO files (file_name, content, year_id, text_content) VALUES (?, ?, 
         (SELECT years.id FROM years 
         JOIN modules ON years.module_id = modules.id
-        WHERE years.year = ? AND modules.name = ?))
-        ''', (file_name, content, year, module_name))
+        WHERE years.year = ? AND modules.name = ?),?)
+        ''', (file_name, content, year, module_name, text_content))
         conn.commit()
 
 def update_file_content(file_name, content):
@@ -164,8 +166,7 @@ def delete_module(module_name, formation_name):
 def delete_year(year, module_name):
     with sqlite3.connect('modules.db') as conn:
         c = conn.cursor()
-        c.execute('''
-        DELETE FROM years WHERE year = ? AND module_id = (SELECT id FROM modules WHERE name = ?)
+        c.execute('''= (SELECT id FROM modules WHERE name = ?)
         ''', (year, module_name))
         conn.commit()
 
