@@ -3,6 +3,9 @@ from streamlit_pdf_viewer import pdf_viewer
 import base64
 from util import *
 
+logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"  
+st.sidebar.image(logo_path, use_column_width=True)
+
 st.title("📂Analyser les liens")
 
 # Liste pour stocker les fichiers PDF chargés
