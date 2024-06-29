@@ -1,5 +1,5 @@
 import os
-import fitz
+import pymupdf
 import base64
 import streamlit as st
 from docx import Document
@@ -22,7 +22,7 @@ st.markdown(
 
 def lire_pdf(chemin_fichier):
     try:
-        doc = fitz.open(chemin_fichier)
+        doc = pymupdf.open(chemin_fichier)
         contenu = ""
         for page in doc:
             contenu += page.get_text()
@@ -47,8 +47,8 @@ def generate_download_link(file_name, file_data):
     href = f'<a href="data:application/octet-stream;base64,{b64}" download="{file_name}">Télécharger</a>'
     return href
 
-def displayPdf(file_data):
-    doc = fitz.open("pdf", file_data)
+def display_pdf(file_data):
+    doc = PyMuPDF.open("pdf", file_data)
     page = doc.load_page(st.session_state.current_page)
     pix = page.get_pixmap()
     img = pix.tobytes("png")
@@ -61,7 +61,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"  
+logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"
 st.sidebar.image(logo_path, use_column_width=True)
 
 st.title("📂 Objectifs pédagogiques du module")
@@ -80,28 +80,26 @@ selected_year = st.selectbox(" ", get_years(selected_module), help="Choisissez u
 
 st.subheader(f"{selected_module} - {selected_year}")
 
-uploaded_file = st.file_uploader("Upload File", type=["pdf"], accept_multiple_files=False)
+uploaded_file = st.file_uploader("Upload File", type=["pdf", "docx"], accept_multiple_files=False)
 
 if st.button("Lire fichier et Sauvegarder", key=f"lire") and uploaded_file:
     file_name = uploaded_file.name
-    pdf_bytes = uploaded_file.read()
+    file_bytes = uploaded_file.read()
 
     if file_name.lower().endswith('.pdf'):
         contenu = lire_pdf(file_name)
     elif file_name.lower().endswith('.docx'):
         contenu = lire_docx(file_name)
 
-    add_file(file_name, pdf_bytes, selected_year, selected_module, contenu)
-    st.success("File uploaded and saved successfully!")
+    add_file(file_name, file_bytes, selected_year, selected_module, contenu)
+    st.success("Fichier téléversé et sauvegardé avec succès !")
 
 files = get_files(selected_year, selected_module)
 
 if files:
-    
-    html = "<table class='table-dark'><thead class='thead-dark'><tr><th>Nom du fichier</th><th>Télécharger</th></tr></thead><tbody>"
-    
     st.markdown("### Fichiers disponibles")
-    
+    html = "<table class='table-dark'><thead class='thead-dark'><tr><th>Nom du fichier</th><th>Télécharger</th></tr></thead><tbody>"
+
     for file in files:
         file_name = file[0]
         file_data = file[1]
@@ -109,5 +107,9 @@ if files:
         html += f"<tr><td>{file_name}</td><td>{download_link}</td></tr>"
     
     html += "</tbody></table>"
+    st.markdown(html, unsafe_allow_html=True)
 
-    st.markdown(html,unsafe_allow_html=True)
+    for file in files:
+        file_name = file[0]
+        if st.button(f"Supprimer {file_name}", key=f"{file_name}_delete", on_click=delete_file, args=(file_name,selected_year,selected_module)):
+            st.success(f"Fichier {file_name} supprimé avec succès !")
