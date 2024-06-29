@@ -1,6 +1,5 @@
-PyMuPDF
+pymupdf
 pdfplumber
-streamlit
 streamlit 
 streamlit-quill 
 pdfplumber
@@ -8,13 +7,9 @@ streamlit_ace
 pdfkit
 weasyprint
 streamlit_pdf_viewer
-fitz
+wheel
 PyPDF2
 python-docx
-google-auth 
-google-auth-oauthlib 
-google-auth-httplib2 
-google-api-python-client
 frontend
 pandas 
 matplotlib 

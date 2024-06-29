@@ -170,12 +170,12 @@ def delete_year(year, module_name):
         ''', (year, module_name))
         conn.commit()
 
-def delete_file(year, module_name):
+def delete_file(file_name,year, module_name):
     with sqlite3.connect('modules.db') as conn:
         c = conn.cursor()
         c.execute('''
-        DELETE FROM files WHERE year_id = (SELECT id FROM years WHERE year = ? AND module_id = (SELECT id FROM modules WHERE name = ?))
-        ''', (year, module_name))
+        DELETE FROM files WHERE file_name = ? and year_id = (SELECT id FROM years WHERE year = ? AND module_id = (SELECT id FROM modules WHERE name = ?))
+        ''', (file_name,year, module_name))
         conn.commit()
 
 # Initialize the database when the module is loaded
