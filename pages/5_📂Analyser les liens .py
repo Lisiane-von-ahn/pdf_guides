@@ -6,6 +6,19 @@ from util import *
 logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"  
 st.sidebar.image(logo_path, use_column_width=True)
 
+st.sidebar.page_link("pages/1_🔍Recherche.py", label="🔍 Recherche dynamique")
+
+st.sidebar.caption("Enregistrement")
+st.sidebar.page_link("pages/2_🌍Site.py", label="🌍 Site")
+st.sidebar.page_link("pages/2_💻Formation.py", label="💻 Formation")
+st.sidebar.page_link("pages/3_📚Modules.py", label="📚 Modules")
+st.sidebar.page_link("pages/4_📆Années.py", label="📆 Années")
+st.sidebar.page_link("pages/0_📂Mes Fichiers.py", label="📂 Mes Fichiers")
+
+st.sidebar.caption("Outils et reports")
+st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📂 Analyser Fichiers")
+st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
+
 st.title("📂Analyser les liens")
 
 # Liste pour stocker les fichiers PDF chargés
