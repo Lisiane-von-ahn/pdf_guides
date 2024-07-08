@@ -1,13 +1,14 @@
 import psycopg2
 import os
 from psycopg2 import sql
+import streamlit as st
 
 def get_connection():
     try:
         conn = psycopg2.connect(
             dbname="data",
             user="data",
-            password=os.environ["mot"],
+            password=st.secrets["MOT"],
             host="44.211.16.14",
             port="5432"
         )
