@@ -1,0 +1,6 @@
+[theme]
+base="dark"
+[client]
+showSidebarNavigation = false
+[server]
+maxMessageSize = 2000
