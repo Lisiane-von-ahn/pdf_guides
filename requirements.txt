@@ -1,0 +1,17 @@
+pymupdf
+pdfplumber
+streamlit 
+streamlit-quill 
+pdfplumber
+streamlit_ace
+pdfkit
+weasyprint
+streamlit_pdf_viewer
+wheel
+PyPDF2
+python-docx
+frontend
+pandas 
+matplotlib 
+seaborn 
+psycopg2-binary
