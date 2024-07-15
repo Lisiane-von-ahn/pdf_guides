@@ -1,5 +1,5 @@
 import streamlit as st
-from pdf_guides.util.dbLink import connect_db,get_files, get_formations, get_modules, get_sites, get_years
+from util.dbLink import connect_db,get_files, get_formations, get_modules, get_sites, get_years
 from util.util import generate_download_link
 
 # Main Streamlit code
@@ -29,15 +29,15 @@ def main():
     selected_module = st.selectbox("Module", modules, help="Choisissez un module")
 
     st.markdown("<h3 class='text-left'>Formation</h3>", unsafe_allow_html=True)
-    formations = [""] if selected_module == "" else [""] + get_formations(conn, selected_module)
+    formations = [""] + get_formations(conn, selected_module)
     selected_formation = st.selectbox("Formation", formations, help="Choisissez une formation")
 
     st.markdown("<h3 class='text-left'>Année</h3>", unsafe_allow_html=True)
-    years = [""] if selected_module == "" or selected_formation == "" else [""] + get_years(conn, selected_module, selected_formation)
+    years = [""] + get_years(conn, selected_module, selected_formation)
     selected_year = st.selectbox("Année", years, help="Choisissez une année")
 
     st.markdown("<h3 class='text-left'>Site</h3>", unsafe_allow_html=True)
-    sites = [""] if selected_module == "" or selected_formation == "" or selected_year == "" else [""] + get_sites(conn, selected_module, selected_formation, selected_year)
+    sites = [""] + get_sites(conn, selected_module, selected_formation, selected_year)
     selected_site = st.selectbox("Site", sites, help="Choisissez un site")
 
     if st.button("Rechercher tous les fichiers"):
@@ -60,6 +60,7 @@ def main():
                         <tbody>
                     """
                 for file in files:
+                    print(file)
                     file_name, file_content, module_name, year_name, site_name, formation_name = file
                     download_link = generate_download_link(file_name, file_content)
                     html += f"<tr><td>{file_name}</td><td>{module_name}</td><td>{year_name}</td><td>{site_name}</td><td>{formation_name}</td><td>{download_link}</td></tr>"
