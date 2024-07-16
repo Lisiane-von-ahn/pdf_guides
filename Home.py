@@ -27,7 +27,9 @@ def main():
     st.sidebar.caption("Outils et reports")
     st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📂 Analyser Fichiers")
     st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
-
+    st.sidebar.page_link("pages/6_📂Convertir PDF - DOCX.py", label ="📂 Convert pdf en docx")
+    
+     #E:\projet_campus\pdf_guides\pages\6_📂Convertir PDF - DOCX.py 
     st.title("🔍 Recherche Dynamique")
 
     st.markdown("<h3 class='text-left'>Module</h3>", unsafe_allow_html=True)
