@@ -31,6 +31,45 @@ def afficher_accordion(name, liens):
     with st.expander("Résumé des liens"):
         creer_tableau_resume(st, liensBons, liensMauvais)
         
+def liensOk(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return liensBons.count()
+
+def liensNOk(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return len(liensMauvais)
+
+
+def liensOk(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return len(liensBons)
 def mon_lien_est_bon (lien):    
     try:
         response = requests.get(lien)
