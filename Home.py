@@ -1,10 +1,16 @@
 import streamlit as st
 from util.dbLink import connect_db,get_files, get_formations, get_modules, get_sites, get_years
-from util.util import generate_download_link
+from util.util import generate_download_link, extraire_liens, liensNOk, liensOk
+from util.pdfmanage import convert_pdf_to_docx, generate_download_link_doc, generateTempFile
+from io import BytesIO
 
 # Main Streamlit code
 def main():
     conn = connect_db()
+
+    checkbox_docx = st.checkbox('Possibilité de exporter à docx ?')
+    checkbox_liens = st.checkbox('Vérifier liens ?')
+
 
     logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"  
     st.sidebar.image(logo_path, use_column_width=True)
@@ -54,16 +60,58 @@ def main():
                                 <th>Année</th>
                                 <th>Site</th>
                                 <th>Formation</th>
-                                <th>Télécharger</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    """
+                                <th>Télécharger</th>"""
+                                
+                                
+                if(checkbox_docx):
+                    html = html + """                                
+                                    <th>Convertir à Docx</th>"""
+                    
+                if (checkbox_liens):
+                    html = html + """                                
+                                    <th>Liens OK</th>
+                                    <th>Liens NOK</th>
+                        """
+
+                html = html + """                                 </tr>
+                            </thead>
+                            <tbody>"""
+
+
                 for file in files:
                     print(file)
-                    file_name, file_content, module_name, year_name, site_name, formation_name = file
+                    id,file_name, file_content, module_name, year_name, site_name, formation_name = file
                     download_link = generate_download_link(file_name, file_content)
-                    html += f"<tr><td>{file_name}</td><td>{module_name}</td><td>{year_name}</td><td>{site_name}</td><td>{formation_name}</td><td>{download_link}</td></tr>"
+
+                    if (checkbox_liens or checkbox_docx):
+                        generateTempFile(file_content,"pdf" in file_name)
+
+                    if("pdf" in file_name):
+                        if (checkbox_docx):
+                            docx_buffer = convert_pdf_to_docx(file_content)
+                            download_doc = generate_download_link_doc(file_name.replace ("pdf","docx"), docx_buffer)
+                    else:
+                        download_doc = ""
+
+                    if (checkbox_liens):
+                        if("pdf" in file_name): 
+                            extension = "pdf"
+                        else:
+                            extension = "docx"
+                             
+                        liens = extraire_liens("temp."+ extension)
+                        bons = liensOk(liens)
+                        mauvais = liensNOk(liens) 
+
+                    html += f"<tr><td>{file_name}</td><td>{module_name}</td><td>{year_name}</td><td>{site_name}</td><td>{formation_name}</td><td>{download_link}</td>"
+                    
+                    if (checkbox_docx):
+                        html += f"<td>{download_doc}</td>"
+                    
+                    if(checkbox_liens):
+                        html += f"<td>{bons}</td><td>{mauvais}</td>"
+                        
+                    html += f"</tr>"
 
                 html += "</tbody></table>"
                 st.markdown(html, unsafe_allow_html=True)
