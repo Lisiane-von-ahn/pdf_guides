@@ -28,7 +28,7 @@ def main():
     st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📂 Analyser Fichiers")
     st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
 
-    st.title("🔍 Recherche Dynamique")                    download_link = generate_download_link(file_name, file_content)
+    st.title("🔍 Recherche Dynamique")                    
 
 
     st.markdown("<h3 class='text-left'>Module</h3>", unsafe_allow_html=True)
