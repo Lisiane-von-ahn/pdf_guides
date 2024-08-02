@@ -8,7 +8,7 @@ from io import BytesIO
 def main():
     conn = connect_db()
 
-#    checkbox_docx = st.checkbox('Possibilité de exporter à docx ?')
+    checkbox_docx = st.checkbox('Possibilité de exporter à docx ?')
     checkbox_liens = st.checkbox('Vérifier liens ?')
 
 
