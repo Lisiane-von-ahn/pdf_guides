@@ -7,48 +7,39 @@ def get_sites():
         c.execute('SELECT name FROM sites')
         return [row[0] for row in c.fetchall()]
 
-def get_formations(site_name):
+def get_formations():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
         SELECT formations.name FROM formations
-        JOIN sites ON formations.site_id = sites.id
-        WHERE sites.name = ?
-        ''', (site_name,))
+        ''')
         return [row[0] for row in c.fetchall()]
 
 
-def get_modules(formation_name):
+def get_modules():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
         SELECT modules.name FROM modules
-        JOIN formations ON modules.formation_id = formations.id
-        WHERE formations.name = ?
-        ''', (formation_name,))
+        ''')
         return [row[0] for row in c.fetchall()]
 
 
-def get_years(module_name):
+def get_years():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT years.year FROM years
-        JOIN modules ON years.module_id = modules.id
-        WHERE modules.name = ?
-        ''', (module_name,))
+        SELECT years.year_name FROM years
+        ''')
         return [row[0] for row in c.fetchall()]
 
 
-def get_files(year, module_name):
+def get_files():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT files.file_name,files.content FROM files
-        JOIN years ON files.year_id = years.id
-        JOIN modules ON years.module_id = modules.id
-        WHERE years.year = ? AND modules.name = ?
-        ''', (year, module_name))
+        SELECT files.name,files.file FROM files
+        ''')
         return [row for row in c.fetchall()]
 
 

@@ -4,7 +4,7 @@ import base64
 import streamlit as st
 from docx import Document
 from streamlit.components.v1 import html
-from db import (
+from postgres import (
     get_sites, get_formations, get_modules, get_years, get_files, add_site, add_formation, add_module,
     add_year, add_file, update_file_content, delete_site, delete_formation, delete_module,
     delete_year, delete_file
@@ -48,7 +48,7 @@ def generate_download_link(file_name, file_data):
     return href
 
 def display_pdf(file_data):
-    doc = PyMuPDF.open("pdf", file_data)
+    doc = pymupdf.open("pdf", file_data)
     page = doc.load_page(st.session_state.current_page)
     pix = page.get_pixmap()
     img = pix.tobytes("png")
@@ -77,19 +77,19 @@ st.sidebar.caption("Outils et reports")
 st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📂 Analyser Fichiers")
 st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
 
-st.title("📂 Mes fichiers (Consulter, Enregistrer et Supprimer)")
+st.title("📂 Mes fichiers (Enregistrer et Supprimer)")
 
 st.markdown("<h3 style='text-align: left;'>🌏Site</h3>", unsafe_allow_html=True)
 selected_site = st.selectbox(" ", get_sites(), help="Choisissez un site")
 
 st.markdown("<h3 style='text-align: left;'>🎓Formation</h3>", unsafe_allow_html=True)
-selected_formation = st.selectbox(" ", get_formations(selected_site), help="Choisissez une formation")
+selected_formation = st.selectbox(" ", get_formations(), help="Choisissez une formation")
 
 st.markdown("<h3 style='text-align: left;'>📚Module</h3>", unsafe_allow_html=True)
-selected_module = st.selectbox(" ", get_modules(selected_formation), help="Choisissez un module")
+selected_module = st.selectbox(" ", get_modules(), help="Choisissez un module")
 
 st.markdown("<h3 style='text-align: left;'>🗓Années</h3>", unsafe_allow_html=True)
-selected_year = st.selectbox(" ", get_years(selected_module), help="Choisissez une année")
+selected_year = st.selectbox(" ", get_years(), help="Choisissez une année")
 
 st.subheader(f"{selected_module} - {selected_year}")
 
@@ -104,10 +104,10 @@ if st.button("Lire fichier et Sauvegarder", key=f"lire") and uploaded_file:
     elif file_name.lower().endswith('.docx'):
         contenu = lire_docx(file_name)
 
-    add_file(file_name, file_bytes, selected_year, selected_module, contenu)
+    add_file(file_name, file_bytes, contenu)
     st.success("Fichier téléversé et sauvegardé avec succès !")
 
-files = get_files(selected_year, selected_module)
+files = get_files()
 
 if files:
     st.markdown("### Fichiers disponibles")
