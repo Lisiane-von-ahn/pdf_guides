@@ -1,5 +1,5 @@
 import streamlit as st
-import sqlite3
+import connection
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -16,9 +16,7 @@ st.sidebar.image(logo_path, use_column_width=True)
 st.sidebar.page_link("pages/1_🔍Recherche.py", label="🔍 Recherche dynamique")
 
 st.sidebar.caption("Enregistrement")
-st.sidebar.page_link("pages/2_🌍Site.py", label="🌍 Site")
-st.sidebar.page_link("pages/2_💻Formation.py", label="💻 Formation")
-st.sidebar.page_link("pages/3_📚Modules.py", label="📚 Modules")
+st.siselected_moduleidebar.page_link("pages/3_📚Modules.py", label="📚 Modules")
 st.sidebar.page_link("pages/4_📆Années.py", label="📆 Années")
 st.sidebar.page_link("pages/0_📂Mes Fichiers.py", label="📂 Mes Fichiers")
 
@@ -27,7 +25,7 @@ st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📈 Analyser 
 st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
 
 def get_data(query):
-    with sqlite3.connect('modules.db') as conn:
+    with connection.get_connection() as conn:
         return pd.read_sql_query(query, conn)
 
 sites_data = get_data("SELECT * FROM sites")
@@ -44,7 +42,7 @@ count_files = len(files_data)
 
 # Calculate file sizes
 def get_file_sizes():
-    with sqlite3.connect('modules.db') as conn:
+    with connection.get_connection()  as conn:
         c = conn.cursor()
         c.execute("SELECT file_name, length(content) as size FROM files")
         file_sizes = c.fetchall()
