@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from streamlit_pdf_viewer import pdf_viewer
-from util.util import afficher_accordion,convertir_pdf_en_docx
+from util.util import afficher_accordion, convertir_pdf_en_docx
 from pdf2docx import Converter
 import glob
 
