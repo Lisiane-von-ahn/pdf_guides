@@ -1,5 +1,5 @@
 import streamlit as st
-from db import get_sites, add_site, delete_site
+from postgres import get_sites, add_site, delete_site
 
 logo_path = "https://le-campus-numerique.fr/wp-content/uploads/2020/12/logo-campus-header-300x60.png"  
 st.sidebar.image(logo_path, use_column_width=True)
