@@ -7,7 +7,7 @@ from streamlit.components.v1 import html
 from postgres import (
     get_sites, get_formations, get_modules, get_years, get_files, add_site, add_formation, add_module,
     add_year, add_file, update_file_content, delete_site, delete_formation, delete_module,
-    delete_year, delete_file
+    delete_year, delete_file,get_files_filter
 )
 
 st.markdown(
@@ -104,10 +104,12 @@ if st.button("Lire fichier et Sauvegarder", key=f"lire") and uploaded_file:
     elif file_name.lower().endswith('.docx'):
         contenu = lire_docx(file_name)
 
-    add_file(file_name, file_bytes, contenu)
+    add_file(selected_site, selected_module, selected_formation, selected_year,contenu, file_name,file_bytes)
     st.success("Fichier téléversé et sauvegardé avec succès !")
 
-files = get_files()
+files = get_files_filter(selected_year,selected_module,selected_formation,selected_site)
+
+print (files)
 
 if files:
     st.markdown("### Fichiers disponibles")

@@ -1,6 +1,34 @@
 import connection
 
 
+def get_site_id(site_name):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('SELECT id FROM sites where name = %s',(site_name,))
+        row = c.fetchone()
+        return row [0]
+
+def get_module_id(module_name):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('SELECT id FROM modules where name = %s',(module_name,))
+        row = c.fetchone()
+        return row [0]
+
+def get_formation_id(formation):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('SELECT id FROM formations where name = %s',(formation,))
+        row = c.fetchone()
+        return row [0]
+    
+def get_year_id(years):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('SELECT id FROM years where year_name = %s',(years,))
+        row = c.fetchone()
+        return row [0]
+  
 def get_sites():
     with connection.get_connection() as conn:
         c = conn.cursor()
@@ -32,6 +60,20 @@ def get_years():
         SELECT years.year_name FROM years
         ''')
         return [row[0] for row in c.fetchall()]
+
+
+def get_files_filter(year, module_name, formation, site):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('''
+        SELECT files.name,file FROM files
+        JOIN years ON files.year_id = years.id
+        JOIN modules ON files.module_id = modules.id
+        JOIN sites on sites.id = files.site_id
+        JOIN formations on formations.id = files.formation_id                                     
+        WHERE years.year_name = %s AND modules.name = %s and formations.name = %s and sites.name = %s 
+        ''', (year, module_name,formation,site))
+        return [row for row in c.fetchall()]
 
 
 def get_files():
@@ -75,15 +117,13 @@ def add_year(year, module_name):
         conn.commit()
 
 
-def add_file(file_name, content, year, module_name, text_content):
+def add_file(site, module, formation, year, content, file_name,file_bytes):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        INSERT INTO files (file_name, content, year_id, text_content) VALUES (?, ?, 
-        (SELECT years.id FROM years 
-        JOIN modules ON years.module_id = modules.id
-        WHERE years.year = ? AND modules.name = ?),?)
-        ''', (file_name, content, year, module_name, text_content))
+        INSERT INTO files (site_id,module_id,formation_id,year_id,name,content,file) VALUES ( 
+        %s,%s,%s,%s,%s,%s,%s)
+        ''', (get_site_id(site), get_module_id(module),get_formation_id(formation), get_year_id(year), content, file_name, file_bytes ))
         conn.commit()
 
 
