@@ -126,5 +126,7 @@ if files:
 
     for file in files:
         file_name = file[0]
-        if st.button(f"Supprimer {file_name}", key=f"{file_name}_delete", on_click=delete_file, args=(file_name,selected_year,selected_module)):
+        id = file[2]
+
+        if st.button(f"Supprimer {file_name}", key=f"{file_name}_delete", on_click=delete_file, args=(id,)):
             st.success(f"Fichier {file_name} supprimé avec succès !")
