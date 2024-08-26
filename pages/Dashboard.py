@@ -3,7 +3,6 @@ import connection
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import account.test
 
 st.set_page_config(
     page_title="Dashboard",
@@ -16,11 +15,11 @@ st.sidebar.image(logo_path, use_column_width=True)
 st.sidebar.page_link("pages/1_🔍Recherche.py", label="🔍 Recherche dynamique")
 
 st.sidebar.caption("Enregistrement")
-st.siselected_moduleidebar.page_link("pages/3_📚Modules.py", label="📚 Modules")
+st.sidebar.page_link("pages/3_📚Modules.py", label="📚 Modules")
 st.sidebar.page_link("pages/4_📆Années.py", label="📆 Années")
 st.sidebar.page_link("pages/0_📂Mes Fichiers.py", label="📂 Mes Fichiers")
 
-st.sidebar.caption("Outils et reports")
+st.sidebar.caption("Outils et reports") 
 st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📈 Analyser Fichiers")
 st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
 
@@ -30,28 +29,27 @@ def get_data(query):
 
 sites_data = get_data("SELECT * FROM sites")
 formations_data = get_data("SELECT * FROM formations")
-modules_data = get_data("SELECT * FROM modules")
-years_data = get_data("SELECT DISTINCT year FROM years")
-files_data = get_data("SELECT * FROM files")
+modules_data = get_data("SELECT distinct module_id, formation_id, formations.name as name FROM files,modules, formations where files.module_id = module_id and files.formation_id = formations.id")
+years_data = get_data("SELECT DISTINCT year_name FROM years")
+files_data = get_data("SELECT count(1) c FROM files")
 
 count_sites = len(sites_data)
 count_formations = len(formations_data)
 count_modules = len(modules_data)
 count_years = len(years_data)
-count_files = len(files_data)
+count_files = files_data["c"]
 
 # Calculate file sizes
 def get_file_sizes():
     with connection.get_connection()  as conn:
         c = conn.cursor()
-        c.execute("SELECT file_name, length(content) as size FROM files")
+        c.execute("SELECT name, length(file) as size FROM files")
         file_sizes = c.fetchall()
     
     file_sizes_mb = []
     for file_name, size_bytes in file_sizes:
         size_mb = size_bytes / (1024 * 1024)  # Convert bytes to MB
         file_sizes_mb.append((file_name, size_mb))
-    
     return pd.DataFrame(file_sizes_mb, columns=['file_name', 'size_mb'])
 
 file_sizes_data = get_file_sizes()

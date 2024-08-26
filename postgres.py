@@ -66,7 +66,7 @@ def get_files_filter(year, module_name, formation, site):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT files.name,file FROM files
+        SELECT files.name,file, files.id as id FROM files
         JOIN years ON files.year_id = years.id
         JOIN modules ON files.module_id = modules.id
         JOIN sites on sites.id = files.site_id
@@ -123,7 +123,7 @@ def add_file(site, module, formation, year, content, file_name,file_bytes):
         c.execute('''
         INSERT INTO files (site_id,module_id,formation_id,year_id,name,content,file) VALUES ( 
         %s,%s,%s,%s,%s,%s,%s)
-        ''', (get_site_id(site), get_module_id(module),get_formation_id(formation), get_year_id(year), content, file_name, file_bytes ))
+        ''', (get_site_id(site), get_module_id(module),get_formation_id(formation), get_year_id(year), file_name,content, file_bytes ))
         conn.commit()
 
 
@@ -169,10 +169,10 @@ def delete_year(year, module_name):
         conn.commit()
 
 
-def delete_file(file_name,year, module_name):
+def delete_file(id):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        DELETE FROM files WHERE file_name = ? and year_id = (SELECT id FROM years WHERE year = ? AND module_id = (SELECT id FROM modules WHERE name = ?))
-        ''', (file_name,year, module_name))
+        DELETE FROM files WHERE id = %s
+        ''', (id,))
         conn.commit()
