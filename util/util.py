@@ -102,10 +102,13 @@ def extraire_liens_dans_docx(fichier_docx):
     return liens
 
 def extraire_liens (fichier):
-    if "docx" in fichier:
-        return extraire_liens_dans_docx(fichier)
-    else:
-        return extraire_liens_dans_pdf(fichier)
+    try:        
+        if "docx" in fichier:
+            return extraire_liens_dans_docx(fichier)
+        else:
+            return extraire_liens_dans_pdf(fichier)
+    except:
+        print ("Erreur lien")
 
 
 def extraire_liens_dans_pdf(fichier_pdf):
