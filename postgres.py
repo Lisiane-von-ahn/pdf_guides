@@ -1,5 +1,55 @@
+import os
+import tempfile
 import connection
+import convert as cvt
 
+def update_file_blob(file_id, new_blob):
+    with connection.get_connection() as conn:
+
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE files
+        SET file = %s
+        WHERE id = %s;
+        """
+
+        cursor.execute(query, (new_blob, file_id))
+
+        conn.commit()
+
+        cursor.close()
+
+        return True
+
+def process_file_for_year(source_year, dest_year):
+    
+    year_id_dest = get_year_id(dest_year) 
+
+    file_record = get_files_by_year_pdf(year_id_dest)
+
+    for file_id, file_name, file_blob in file_record:
+        try:
+            if ".pdf" in file_name:
+                print (file_name)
+
+                temp_input_file_pdf = tempfile.NamedTemporaryFile(delete=False, suffix="pdf")
+                with open(temp_input_file_pdf.name, 'wb') as temp_file:
+                    temp_file.write(file_blob)
+
+                    temp_output_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+
+                    cvt.replace_text_in_pdf(temp_input_file_pdf.name,temp_output_file.name, source_year, dest_year)
+            
+                    with open(temp_output_file.name, 'rb') as output_file:
+                        updated_file_blob = output_file.read()
+
+                    update_file_blob(file_id, updated_file_blob)
+
+                    os.remove(temp_input_file_pdf.name)
+                    os.remove(temp_output_file.name)
+        except:
+            print("Erreur " + file_name)
 
 def get_site_id(site_name):
     with connection.get_connection() as conn:
@@ -53,6 +103,17 @@ def get_modules():
         return [row[0] for row in c.fetchall()]
 
 
+def duplicate_year(source,dest):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('''
+        insert into files (site_id,module_id,formation_id,year_id,name,content,file) 
+        select site_id,module_id,formation_id,(select id from years where year_name = %s),name,content,file from files where year_id in (select id from years where year_name = %s)
+        ''',(dest,source))        
+
+    process_file_for_year(source,dest)
+
+
 def get_years():
     with connection.get_connection() as conn:
         c = conn.cursor()
@@ -84,36 +145,41 @@ def get_files():
         ''')
         return [row for row in c.fetchall()]
 
-
-def add_site(site_name):
-    with connection.get_connection() as conn:
-        c = conn.cursor()
-        c.execute('INSERT INTO sites (name) VALUES (?)', (site_name,))
-        conn.commit()
-
-
-def add_formation(formation_name, site_name):
-    with connection.get_connection() as conn:
-        c = conn.cursor()
-        c.execute('INSERT INTO formations (name, site_id) VALUES (?, (SELECT id FROM sites WHERE name = ?))', (formation_name, site_name))
-        conn.commit()
-
-
-def add_module(module_name, formation_name):
-    with connection.get_connection() as conn:
-        c = conn.cursor()
-        c.execute('INSERT INTO modules (name, formation_id) VALUES (?, (SELECT id FROM formations WHERE name = ?))', (module_name, formation_name))
-        conn.commit()
-
-
-def add_year(year, module_name):
+def get_files_by_year_pdf(year_id):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        INSERT INTO years (year, module_id) VALUES (?, 
-        (SELECT id FROM modules 
-        WHERE name = ?))
-        ''', (year, module_name))
+        SELECT id,name,file FROM files where year_id = %s
+        ''',(year_id,))
+        return [row for row in c.fetchall()]
+        
+def add_site(site_name):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('INSERT INTO sites (name) VALUES (%s)', (site_name,))
+        conn.commit()
+
+
+def add_formation(formation_name):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('INSERT INTO formations (name) VALUES (%s)', (formation_name,))
+        conn.commit()
+
+
+def add_module(module_name):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('INSERT INTO modules (name) VALUES (%s', (module_name,))
+        conn.commit()
+
+
+def add_year(year):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('''
+        INSERT INTO years (year_name) VALUES (%s)
+        ''', (year, ))
         conn.commit()
 
 
@@ -131,7 +197,7 @@ def update_file_content(file_name, content):
     with connection.get_connection()('modules.db') as conn:
         c = conn.cursor()
         c.execute('''
-        UPDATE files SET content = ? WHERE file_name = ?
+        UPDATE files SET content = %s WHERE file_name = %s
         ''', (content, file_name))
         conn.commit()
 
@@ -139,33 +205,33 @@ def update_file_content(file_name, content):
 def delete_site(site_name):
     with connection.get_connection() as conn:
         c = conn.cursor()
-        c.execute('DELETE FROM sites WHERE name = ?', (site_name,))
+        c.execute('DELETE FROM sites WHERE name = %s', (site_name,))
         conn.commit()
 
 
-def delete_formation(formation_name, site_name):
+def delete_formation(formation_name):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        DELETE FROM formations WHERE name = ? AND site_id = (SELECT id FROM sites WHERE name = ?)
-        ''', (formation_name, site_name))
+        DELETE FROM formations WHERE name = %s
+        ''', (formation_name, ))
         conn.commit()
 
 
-def delete_module(module_name, formation_name):
+def delete_module(module_name):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        DELETE FROM modules WHERE name = ? AND formation_id = (SELECT id FROM formations WHERE name = ?)
-        ''', (module_name, formation_name))
+        DELETE FROM modules WHERE name = %s)
+        ''', (module_name, ))
         conn.commit()
 
 
-def delete_year(year, module_name):
+def delete_year(year):
     with connection.get_connection() as conn:
         c = conn.cursor()
-        c.execute('''= (SELECT id FROM modules WHERE name = ?)
-        ''', (year, module_name))
+        c.execute('''delete from years where year_name = %s)
+        ''', (year))
         conn.commit()
 
 
