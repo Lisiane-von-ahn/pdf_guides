@@ -76,6 +76,8 @@ st.sidebar.page_link("pages/0_📂Mes Fichiers.py", label="📂 Mes Fichiers")
 st.sidebar.caption("Outils et reports")
 st.sidebar.page_link("pages/5_📂Analyser les liens .py", label="📂 Analyser Fichiers")
 st.sidebar.page_link("pages/Dashboard.py", label="📈 Dashboard")
+st.sidebar.caption("Automation")
+st.sidebar.page_link("pages/Cloner_annee.py", label="📆 Cloner Années")
 
 st.title("📂 Mes fichiers (Enregistrer et Supprimer)")
 
