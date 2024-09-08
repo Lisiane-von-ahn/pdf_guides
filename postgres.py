@@ -58,6 +58,7 @@ def get_site_id(site_name):
         row = c.fetchone()
         return row [0]
 
+
 def get_module_id(module_name):
     with connection.get_connection() as conn:
         c = conn.cursor()
@@ -127,7 +128,7 @@ def get_files_filter(year, module_name, formation, site):
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT files.name,file, files.id as id FROM files
+        SELECT files.name,file, files.id as id, files.liens_ok, files.liens_nok, files.liens_nok_details FROM files
         JOIN years ON files.year_id = years.id
         JOIN modules ON files.module_id = modules.id
         JOIN sites on sites.id = files.site_id
@@ -140,9 +141,9 @@ def get_files_filter(year, module_name, formation, site):
 def get_files():
     with connection.get_connection() as conn:
         c = conn.cursor()
-        c.execute('''
-        SELECT files.name,files.file FROM files
-        ''')
+        c.execute("""
+        SELECT files.name,files.file, files.id FROM files
+        """)
         return [row for row in c.fetchall()]
 
 def get_files_by_year_pdf(year_id):
@@ -201,6 +202,13 @@ def update_file_content(file_name, content):
         ''', (content, file_name))
         conn.commit()
 
+def update_liens(file_id, nbons, nmauvais, liensmauvais):
+    with connection.get_connection() as conn:
+        c = conn.cursor()
+        c.execute('''
+        UPDATE files SET liens_ok = %s, liens_nok = %s, liens_nok_details = %s  WHERE id = %s
+        ''', (nbons, nmauvais,liensmauvais,file_id))
+        conn.commit()
 
 def delete_site(site_name):
     with connection.get_connection() as conn:

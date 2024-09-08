@@ -2,6 +2,7 @@ import os
 import pymupdf
 import base64
 import streamlit as st
+import verifier_liens
 from docx import Document
 from streamlit.components.v1 import html
 from postgres import (
@@ -101,10 +102,7 @@ if st.button("Lire fichier et Sauvegarder", key=f"lire") and uploaded_file:
     file_name = uploaded_file.name
     file_bytes = uploaded_file.read()
 
-    if file_name.lower().endswith('.pdf'):
-        contenu = lire_pdf(file_name)
-    elif file_name.lower().endswith('.docx'):
-        contenu = lire_docx(file_name)
+    contenu = ""
 
     add_file(selected_site, selected_module, selected_formation, selected_year,contenu, file_name,file_bytes)
     st.success("Fichier téléversé et sauvegardé avec succès !")
@@ -128,7 +126,11 @@ if files:
 
     for file in files:
         file_name = file[0]
+        file_content = file[1]
         id = file[2]
 
-        if st.button(f"Supprimer {file_name}", key=f"{file_name}_delete", on_click=delete_file, args=(id,)):
+        if file[3] == None:
+            verifier_liens.process_file_by_fields(file_name, file_content, id)
+
+        if st.button(f"Supprimer {file_name}", key=f"{file_name}_{id}_delete", on_click=delete_file, args=(id,)):
             st.success(f"Fichier {file_name} supprimé avec succès !")
