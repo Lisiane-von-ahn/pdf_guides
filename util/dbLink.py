@@ -71,8 +71,17 @@ def get_file(conn, id):
 
 # Function to retrieve files based on all selected criteria
 def get_files(conn, selected_module, selected_formation, selected_year, selected_site):
+    
+    formations = ""
+
+    for item in selected_formation:
+        if formations != "":
+            formations += ",'" + item + "'"
+        else:
+            formations = "'" + item + "'"            
+    
     query = """
-    SELECT f.id,f.name, f.file,  m.name AS module_name, y.year_name, s.name AS site_name, fo.name AS formation_name
+    SELECT f.id,f.name, f.file,  m.name AS module_name, y.year_name, s.name AS site_name, fo.name AS formation_name, liens_ok, liens_nok, liens_nok_details
     FROM files f
     JOIN sites s ON f.site_id = s.id
     JOIN modules m ON f.module_id = m.id
@@ -87,8 +96,7 @@ def get_files(conn, selected_module, selected_formation, selected_year, selected
         params.append(selected_module)
 
     if selected_formation:
-        query += " AND fo.name = %s"
-        params.append(selected_formation)
+        query += " AND fo.name in (" + formations + ")"
 
     if selected_year:
         query += " AND y.year_name = %s"
@@ -105,3 +113,24 @@ def get_files(conn, selected_module, selected_formation, selected_year, selected
         files = cursor.fetchall()
 
     return files
+
+
+def get_files_by_id(conn, id):
+    
+    query = """
+    SELECT f.id,f.name, f.file,  m.name AS module_name, y.year_name, s.name AS site_name, fo.name AS formation_name, liens_ok, liens_nok, liens_nok_details
+    FROM files f
+    JOIN sites s ON f.site_id = s.id
+    JOIN modules m ON f.module_id = m.id
+    JOIN formations fo ON f.formation_id = fo.id
+    JOIN years y ON f.year_id = y.id
+    WHERE f.id = %s
+    """
+    query += " order by f.name"
+
+    with conn.cursor() as cursor:
+        cursor.execute(query, (id,))
+        files = cursor.fetchall()
+
+    return files[0]
+

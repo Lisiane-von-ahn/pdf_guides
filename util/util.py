@@ -4,6 +4,7 @@ import PyPDF2
 from docx import Document
 from docx.oxml.ns import qn
 import base64
+import re
 
 def creer_tableau_resume(st,listeBon, listeMauvais):
     st.markdown("<b><font color=red>" + str(len(listeMauvais)) + " Lien(s) ne marche(nt) pas</font> </b>", unsafe_allow_html=True)
@@ -70,12 +71,58 @@ def liensOk(liens):
             liensMauvais.append(lien)
 
     return len(liensBons)
+
+def liensOk_list(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return liensBons
+
+def liensNOk_list(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return liensMauvais
+
+
+def liensOk_list(liens):
+    
+    liensBons = []
+    liensMauvais = []
+
+    for lien in liens:
+        if mon_lien_est_bon(lien):
+            liensBons.append(lien)
+        else:
+            liensMauvais.append(lien)
+
+    return liensBons
+
 def mon_lien_est_bon (lien):    
     try:
+        print(lien)
         response = requests.get(lien)
+        print(response.status_code)
         response.raise_for_status()
     except requests.HTTPError as http_err:
-        return False
+        if "https://github.com/le-campus-numerique" in lien: #si c'est campus, c'est normal parce que le repo est privé
+            return True
+        else:
+            return False        
     except Exception as err:
         return False
     else:
@@ -86,18 +133,24 @@ def extraire_liens_dans_docx(fichier_docx):
     doc = Document(fichier_docx)
 
     for paragraph in doc.paragraphs:
-        text = paragraph.text
-        start = 0
-        while start < len(text):
-            start_index = text.find('http', start)
-            if start_index == -1:
-                break
-            end_index = text.find(' ', start_index)
-            if end_index == -1:
-                end_index = len(text)
-            url = text[start_index:end_index]
-            liens.append(url)
-            start = end_index
+        try:
+            # Split paragraph text by newline characters
+            lines = paragraph.text.split('\n')
+
+            for line in lines:
+                start = 0
+                while start < len(line):
+                    start_index = line.find('http', start)
+                    if start_index == -1:
+                        break
+                    end_index = line.find(' ', start_index)
+                    if end_index == -1:
+                        end_index = len(line)
+                    url = line[start_index:end_index]
+                    liens.append(url)
+                    start = end_index
+        except Exception as e:
+            print(f"Skipping paragraph due to error: {e}")
 
     return liens
 
@@ -109,7 +162,6 @@ def extraire_liens (fichier):
             return extraire_liens_dans_pdf(fichier)
     except:
         print ("Erreur lien")
-
 
 def extraire_liens_dans_pdf(fichier_pdf):
 

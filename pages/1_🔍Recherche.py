@@ -1,9 +1,10 @@
 import streamlit as st
 import time  # Import the time module
-from util.dbLink import connect_db, get_files, get_formations, get_modules, get_sites, get_years
+from util.dbLink import connect_db, get_files, get_formations, get_modules, get_sites, get_years, get_files_by_id
 from util.util import generate_download_link, extraire_liens, liensNOk, liensOk
 from util.pdfmanage import convert_pdf_to_docx, generate_download_link_doc, generateTempFile
 from io import BytesIO
+import verifier_liens
 
 # Main Streamlit code
 def main():
@@ -33,13 +34,13 @@ def main():
     modules = [""] + get_modules(conn)
     selected_module = st.selectbox("Module", modules, help="Choisissez un module")
 
+    st.markdown("<h3 class='text-left'>Année</h3>", unsafe_allow_html=True)
+    years = [""] + get_years(conn, selected_module, "")
+    selected_year = st.selectbox("Année", years, help="Choisissez une année")
+
     st.markdown("<h3 class='text-left'>Formation</h3>", unsafe_allow_html=True)
     formations = [""] + get_formations(conn, selected_module)
-    selected_formation = st.selectbox("Formation", formations, help="Choisissez une formation")
-
-    st.markdown("<h3 class='text-left'>Année</h3>", unsafe_allow_html=True)
-    years = [""] + get_years(conn, selected_module, selected_formation)
-    selected_year = st.selectbox("Année", years, help="Choisissez une année")
+    selected_formation = st.multiselect("Formation", formations, help="Choisissez une formation")
 
     st.markdown("<h3 class='text-left'>Site</h3>", unsafe_allow_html=True)
     sites = [""] + get_sites(conn, selected_module, selected_formation, selected_year)
@@ -64,36 +65,30 @@ def main():
                                 <th>Télécharger</th>"""
                                 
                 if checkbox_liens:
-                    html += """<th>Liens OK</th><th>Liens NOK</th>"""
+                    html += """<th>Liens OK</th><th>Liens NOK</th><th>Liens NOK Détails</th>"""
 
                 html += """</tr></thead><tbody>"""
 
                 for file in files:
                     print(file)
-                    id, file_name, file_content, module_name, year_name, site_name, formation_name = file
+                    id, file_name, file_content, module_name, year_name, site_name, formation_name,liens_ok,liens_nok,liens_nok_details = file
                     download_link = generate_download_link(file_name, file_content)
 
-                    if checkbox_liens:
-                        generateTempFile(file_content, "pdf" in file_name)
-
-                        if "pdf" in file_name:
-                            extension = "pdf"
-                        else:
-                            extension = "docx"
-
-                        liens = extraire_liens(f"temp.{extension}")
-                        
-                        bons = 0
-                        mauvais = 0
-
-                        if liens:
-                            bons = liensOk(liens)
-                            mauvais = liensNOk(liens)
+                    if liens_nok == None:
+                        verifier_liens.process_file_by_fields(file_name,file_content,id)
+                        id, file_name, file_content, module_name, year_name, site_name, formation_name,liens_ok,liens_nok,liens_nok_details = get_files_by_id(conn,id)
 
                     html += f"<tr><td>{file_name}</td><td>{module_name}</td><td>{year_name}</td><td>{site_name}</td><td>{formation_name}</td><td>{download_link}</td>"
 
+                    if liens_ok == None: 
+                        liens_ok = 0
+                        liens_nok = 0
+                        liens_nok_details = ""
+
                     if checkbox_liens:
-                        html += f"<td>{bons}</td><td>{mauvais}</td>"
+                        urls = liens_nok_details.split()
+                        html_links = "".join([f'<a href="{url}">{url}</a> | ' for url in urls])
+                        html += f"<td>{liens_ok}</td><td>{liens_nok}</td><td>{html_links}</td>"
 
                     html += "</tr>"
 
