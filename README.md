@@ -1,6 +1,6 @@
 # Application de Recherche Dynamique
 
-Cette application Streamlit permet aux utilisateurs de rechercher et d'afficher dynamiquement des informations depuis une base de données SQLite. L'application permet de sélectionner des sites, formations, modules et années, et de rechercher du texte dans les fichiers.
+Cette application Streamlit permet aux utilisateurs de rechercher et d'afficher dynamiquement des informations depuis une base de données PostgreSQL. L'application permet de sélectionner des sites, formations, modules et années, et de rechercher du texte dans les fichiers.
 
 ## Fonctionnalités
 
