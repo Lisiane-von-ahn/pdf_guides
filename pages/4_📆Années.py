@@ -26,7 +26,7 @@ years = get_years()
 selected_year = st.selectbox("Sélectionnez une année à supprimer", years, index=0)
 
 if st.button("Supprimer"):
-    delete_year()
+    delete_year(selected_year)
     st.success(f"L'année '{selected_year}' a été supprimée avec succès!")
 
 st.markdown("---")
