@@ -1,3 +1,4 @@
+pdf2docx
 pymupdf
 pdfplumber
 streamlit 
@@ -15,3 +16,5 @@ pandas
 matplotlib 
 seaborn 
 psycopg2-binary
+spire.pdf
+docx2pdf
