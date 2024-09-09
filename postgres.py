@@ -83,14 +83,14 @@ def get_year_id(years):
 def get_sites():
     with connection.get_connection() as conn:
         c = conn.cursor()
-        c.execute('SELECT name FROM sites')
+        c.execute('SELECT name FROM sites order by name')
         return [row[0] for row in c.fetchall()]
 
 def get_formations():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT formations.name FROM formations
+        SELECT formations.name FROM formations order by name
         ''')
         return [row[0] for row in c.fetchall()]
 
@@ -99,7 +99,7 @@ def get_modules():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT modules.name FROM modules
+        SELECT modules.name FROM modules order by name
         ''')
         return [row[0] for row in c.fetchall()]
 
@@ -119,7 +119,7 @@ def get_years():
     with connection.get_connection() as conn:
         c = conn.cursor()
         c.execute('''
-        SELECT years.year_name FROM years
+        SELECT years.year_name FROM years order by year_name
         ''')
         return [row[0] for row in c.fetchall()]
 
@@ -238,8 +238,8 @@ def delete_module(module_name):
 def delete_year(year):
     with connection.get_connection() as conn:
         c = conn.cursor()
-        c.execute('''delete from years where year_name = %s)
-        ''', (year))
+        c.execute('''delete from years where year_name = %s
+        ''', (year,))
         conn.commit()
 
 

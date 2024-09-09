@@ -80,6 +80,14 @@ def get_files(conn, selected_module, selected_formation, selected_year, selected
         else:
             formations = "'" + item + "'"            
     
+    years = ""
+
+    for item in selected_year:
+        if years != "":
+            years += ",'" + item + "'"
+        else:
+            years = "'" + item + "'"            
+
     query = """
     SELECT f.id,f.name, f.file,  m.name AS module_name, y.year_name, s.name AS site_name, fo.name AS formation_name, liens_ok, liens_nok, liens_nok_details
     FROM files f
@@ -99,8 +107,7 @@ def get_files(conn, selected_module, selected_formation, selected_year, selected
         query += " AND fo.name in (" + formations + ")"
 
     if selected_year:
-        query += " AND y.year_name = %s"
-        params.append(selected_year)
+        query += " AND y.year_name in (" + years + ")"
 
     if selected_site:
         query += " AND s.name = %s"

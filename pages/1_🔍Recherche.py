@@ -36,7 +36,7 @@ def main():
 
     st.markdown("<h3 class='text-left'>Année</h3>", unsafe_allow_html=True)
     years = [""] + get_years(conn, selected_module, "")
-    selected_year = st.selectbox("Année", years, help="Choisissez une année")
+    selected_year = st.multiselect("Année", years, help="Choisissez une année")
 
     st.markdown("<h3 class='text-left'>Formation</h3>", unsafe_allow_html=True)
     formations = [""] + get_formations(conn, selected_module)
