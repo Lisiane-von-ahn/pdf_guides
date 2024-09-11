@@ -2,6 +2,10 @@
 
 Cette application Streamlit permet aux utilisateurs de rechercher et d'afficher dynamiquement des informations depuis une base de données PostgreSQL. L'application permet de sélectionner des sites, formations, modules et années, et de rechercher du texte dans les fichiers.
 
+## Architecture 3-tiers
+
+![Gestion de Docs](https://github.com/username/repository/raw/main/path/to/image.png)
+
 ## Fonctionnalités
 
 - **Sélection de Site**: Choisissez parmi une liste de sites disponibles.
