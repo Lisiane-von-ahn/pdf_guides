@@ -51,9 +51,9 @@ Utilisation
 
 Les utilisateurs peuvent sélectionner un site, une formation, un module et une année à partir des menus déroulants disponibles. Les options disponibles sont dynamiquement filtrées en fonction des sélections précédentes.
 
-- Recherche de Texte
+### Recherche de Texte
 
-### Saisissez du texte dans la barre de recherche pour rechercher dans les fichiers associés à la sélection courante.
+Saisissez du texte dans la barre de recherche pour rechercher dans les fichiers associés à la sélection courante.
 
 ### Affichage des Résultats
 
