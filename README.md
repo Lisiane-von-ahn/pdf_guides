@@ -4,7 +4,7 @@ Cette application Streamlit permet aux utilisateurs de rechercher et d'afficher 
 
 ## Architecture 3-tiers
 
-![Gestion de Docs](https://github.com/username/repository/raw/main/path/to/image.png)
+![Gestion de Docs](https://github.com/Lisiane-von-ahn/pdf_guides/blob/main/architecture.jpg)
 
 ## Fonctionnalités
 
