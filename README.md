@@ -26,5 +26,40 @@ Assurez-vous que votre base de données PostgreSQL est correctement configurée 
    ```sh
    streamlit run Home.py
    ```
-   
+
+## Déploiement sur Streamlit Cloud
+
+L'application peut être déployée sur Streamlit Cloud pour un accès en ligne facile. Suivez ces étapes pour déployer votre application :
+
+- Créer un Compte Streamlit: Si vous n'avez pas encore de compte, inscrivez-vous sur Streamlit Cloud.
+
+- Connecter votre Dépôt GitHub: Une fois connecté, connectez votre dépôt GitHub contenant votre application Streamlit.
+
+- Déployer l'Application:
+     Sur votre tableau de bord Streamlit Cloud, cliquez sur "New App".
+     Sélectionnez le dépôt GitHub où se trouve votre projet.
+     Choisissez la branche (généralement main) et spécifiez le fichier de démarrage (Home.py).
+     Cliquez sur "Deploy" pour déployer votre application.
+
+- Configurer les Variables d'Environnement:
+     Ajoutez les variables d'environnement nécessaires, telles que les informations de connexion à votre base de données PostgreSQL, via l'interface de Streamlit Cloud.
+
+Une fois déployée, votre application sera accessible via une URL unique fournie par Streamlit Cloud.
+Utilisation
+
+### Sélection des Paramètres
+
+Les utilisateurs peuvent sélectionner un site, une formation, un module et une année à partir des menus déroulants disponibles. Les options disponibles sont dynamiquement filtrées en fonction des sélections précédentes.
+
+- Recherche de Texte
+
+### Saisissez du texte dans la barre de recherche pour rechercher dans les fichiers associés à la sélection courante.
+
+### Affichage des Résultats
+
+Les résultats de la recherche sont affichés dans une table. Les utilisateurs peuvent télécharger les fichiers directement depuis l'interface.
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 
