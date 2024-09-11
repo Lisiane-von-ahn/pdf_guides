@@ -13,13 +13,18 @@ Cette application Streamlit permet aux utilisateurs de rechercher et d'afficher 
 
 ## Installation
 
-1. Clonez le dépôt et installer les dépéndences:
+1. Clonez le dépôt et installez les dépendances :
 
    ```sh
    git clone https://github.com/Lisiane-von-ahn/pdf_guides.git
    pip install -r requirements.txt
-  ```
+   ```
+Assurez-vous que votre base de données PostgreSQL est correctement configurée et que les informations de connexion sont correctement définies dans le secrets.toml de l'application.
 
-
-
+2. Lancez le streamlit dans la machine local:
+  
+   ```sh
+   streamlit run Home.py
+   ```
    
+
